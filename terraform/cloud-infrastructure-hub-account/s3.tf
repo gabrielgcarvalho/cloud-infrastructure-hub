@@ -11,7 +11,7 @@ resource "aws_kms_key" "s3_terraform_encryption" {
 
 resource "aws_kms_alias" "s3_terraform_encryption" {
   name          = "alias/s3_terraform-state-lock"
-  target_key_id = aws_kms_key.dynamo_encryption.id
+  target_key_id = aws_kms_key.s3_terraform_encryption.id
 }
 
 resource "aws_s3_bucket" "cloud-infrastructure-hub-terraform" {
@@ -20,9 +20,8 @@ resource "aws_s3_bucket" "cloud-infrastructure-hub-terraform" {
   tags = local.tags
 }
 
-resource "aws_s3_bucket_server_side_encryption_configuration" "cloud-infrastructure-hub-terraform" {
+resource "aws_s3_bucket_server_side_encryption_configuration" "cloud_infrastructure_hub_terraform" {
   bucket = aws_s3_bucket.cloud-infrastructure-hub-terraform.id
-
   rule {
     apply_server_side_encryption_by_default {
       kms_master_key_id = aws_kms_key.s3_terraform_encryption.arn
