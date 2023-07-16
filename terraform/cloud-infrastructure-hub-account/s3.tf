@@ -14,3 +14,9 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "cloud_infrastruct
   }
 }
 
+resource "aws_s3_bucket_versioning" "cloud-infrastructure-hub-terraform" {
+  bucket = aws_s3_bucket.cloud-infrastructure-hub-terraform.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
