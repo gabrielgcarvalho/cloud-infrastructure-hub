@@ -1,6 +1,8 @@
 .DS_Store
 .env
 .terraform
+auto_provider.tf
+terragrunt_backend.tf
 .terraform.lock.hcl
 *.tfstate*
 tmp/
