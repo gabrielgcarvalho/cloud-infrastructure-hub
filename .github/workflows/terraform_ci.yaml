@@ -22,4 +22,4 @@ jobs:
         uses: hashicorp/setup-terraform@v1
 
       - name: Terraform Format Check
-        uses: ./.github/actions/terraform-ci/terraform-format-check
+        uses: ./.github/actions/terraform-format-check
