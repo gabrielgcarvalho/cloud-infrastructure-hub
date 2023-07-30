@@ -3,8 +3,10 @@ description: "Run Terratest tests."
 
 runs:
   using: "composite"
+
   steps:
-    - name: Terraform Format Check
+    - name: Check for Terraform files
+      id: find_files
       shell: bash
       run: |
         terraform_files=$(find . -type f -name "*.tf")
@@ -12,8 +14,13 @@ runs:
           echo "No Terraform files found."
           exit 0
         fi
+        echo "terraform_files=$terraform_files" >> "$GITHUB_ENV"
 
-        for file in $terraform_files; do
+    - name: Terraform Format Check
+      id: format_check
+      shell: bash
+      run: |
+        for file in ${{env.terraform_files}}; do
           echo "Formatting $file"
           terraform fmt -check "$file"
         done
