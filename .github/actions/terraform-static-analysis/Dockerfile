@@ -1,14 +1,13 @@
-FROM alpine:3.14.10
+FROM golang:1.20-bullseye
 
 # Install required packages
-RUN apk update && apk add --no-cache \
-    bash \
-    git \
+RUN apt-get update && apt-get install -y git \
     unzip \
     curl \
     ca-certificates \
     jq \
-    py3-pip
+    python3 \
+    python3-pip
 
 # Install tflint
 RUN curl -Lo /tmp/install_tflint.sh https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh \
