@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  terraform:
-    name: "Terraform"
+  terraform-static-analysis:
+    name: "Terraform Static Analysis"
     runs-on: ubuntu-latest
 
     defaults:
@@ -18,8 +18,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+      # - name: Setup Terraform
+      #   uses: hashicorp/setup-terraform@v1
+      - name: Enable Debug Logging
+        run: |
+          echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
 
-      - name: Terraform Format Check
-        uses: ./.github/actions/terraform-format-check
+      - name: Run Static Analysis
+        uses: ./.github/actions/terraform-static-analysis

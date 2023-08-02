@@ -1,0 +1,6 @@
+name: "Terraform Static Analysis"
+description: "Run Terraform Static Analysis"
+
+runs:
+  using: "docker"
+  image: "Dockerfile"
