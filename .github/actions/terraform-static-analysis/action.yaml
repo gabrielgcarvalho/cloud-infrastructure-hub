@@ -4,3 +4,6 @@ description: "Run Terraform Static Analysis"
 runs:
   using: "docker"
   image: "Dockerfile"
+branding:
+  icon: "shield"
+  color: "gray-dark"
