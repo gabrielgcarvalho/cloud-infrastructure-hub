@@ -73,9 +73,9 @@ fi
 
 if [ "${GITHUB_EVENT_NAME}" == "pull_request" ] && [ -n "${GITHUB_TOKEN}" ]; then
     COMMENT="## :shield: Terraform Static Analysis <br>
-####TFLint Scan Status: ${TFLINT_STATUS}
+<strong>TFLint Scan Status:</strong> ${TFLINT_STATUS}
 ${tflint_output}
-####Checkov Scan Status: ${CHECKOV_STATUS}
+<strong>Checkov Scan Status:</strong> ${CHECKOV_STATUS}
 ${checkov_output}"
 
     PAYLOAD=$(echo "${COMMENT}" | jq -R --slurp '{body: .}' -c)
