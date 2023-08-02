@@ -21,13 +21,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # - name: Setup Terraform
-      #   uses: hashicorp/setup-terraform@v1
-      - name: Enable Debug Logging
-        run: |
-          echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
-
       - name: Run Static Analysis
         env:
           GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
         uses: ./.github/actions/terraform-static-analysis
+
+  terratest:
+    permissions:
+      contents: read
+      pull-requests: write
+    name: "Terratest"
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Run Terratests
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+        uses: ./.github/actions/terratest
