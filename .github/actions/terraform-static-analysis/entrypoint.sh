@@ -1,5 +1,7 @@
 #!/bin/sh
 
+declare -i tflint_exitcode=0
+
 # Get a list of all terraform directories in the repo
 directories=$(find . -type f -name '*.tf' | sed 's#/[^/]*$##' | sed 's/.\///' | sort | uniq)
 echo
@@ -35,16 +37,15 @@ else
 fi
 
 if [ "${GITHUB_EVENT_NAME}" == "pull_request" ] && [ -n "${GITHUB_TOKEN}" ]; then
-    COMMENT="#### \`Terraform Static Analysis\` 
+    COMMENT="#### \`Terraform Static Analysis\`
+#### \`TFLint Scan\` ${TFLINT_STATUS}
+<details><summary>Show Output</summary>
 
-            #### \`TFLint Scan\` ${TFLINT_STATUS}
-            <details><summary>Show Output</summary>
+\`\`\`hcl
+${tflint_exitcode}
+\`\`\`
 
-            \`\`\`hcl
-            ${tflint_exitcode}
-            \`\`\`
-
-            </details>"
+</details>"
 
     PAYLOAD=$(echo "${COMMENT}" | jq -R --slurp '{body: .}')
     URL=$(jq -r .pull_request.comments_url "${GITHUB_EVENT_PATH}")
