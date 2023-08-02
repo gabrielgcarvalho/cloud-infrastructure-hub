@@ -35,7 +35,7 @@ for directory in $directories; do
 
     # Add the tflint output for the current directory to the variable if the current output is not empty
     if [ -n "${tflint_output_current}" ]; then
-        tflint_output="${tflint_output}<br><details><summary>:mag: <strong>TFLint Output for ${directory}</strong></summary><br>${tflint_output_current}<br></details>"
+        tflint_output="${tflint_output}<br><details><summary>:mag: TFLint Output for ${directory}</summary><br>${tflint_output_current}<br></details>"
     fi
 
 done
@@ -54,7 +54,7 @@ for directory in $directories; do
 
     # Add the checkov output for the current directory to the variable if the current output is not empty
     if [ -n "${checkov_output_current}" ]; then
-        checkov_output="${checkov_output}<br><details><summary>:mag: <strong>Checkov Output for ${directory}</strong> </summary><br>${checkov_output_current}<br></details>"
+        checkov_output="${checkov_output}<br><details><summary>:mag: Checkov Output for ${directory}</strong> </summary><br>${checkov_output_current}<br></details>"
     fi
 
   done
@@ -72,7 +72,7 @@ else
 fi
 
 if [ "${GITHUB_EVENT_NAME}" = "pull_request" ] && [ -n "${GITHUB_TOKEN}" ]; then
-    COMMENT="### :shield: Terraform Static Analysis
+    COMMENT="### :shield: Terraform Static Analysis <br>
 
 TFLint Scan Status: ${TFLINT_STATUS}
 ${tflint_output}
