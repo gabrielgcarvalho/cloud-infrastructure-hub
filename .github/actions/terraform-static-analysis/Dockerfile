@@ -6,7 +6,8 @@ RUN apk update && apk add --no-cache \
     git \
     unzip \
     curl \
-    ca-certificates
+    ca-certificates \
+    jq
 
 # Install tflint
 RUN curl -Lo /tmp/install_tflint.sh https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh \

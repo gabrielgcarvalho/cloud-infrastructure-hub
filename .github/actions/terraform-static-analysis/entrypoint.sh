@@ -26,7 +26,7 @@ for directory in $directories; do
     # Run tflint on the current directory
     tflint --config "$tflint_config" --chdir "$terraform_working_dir" 2>&1
 
-    tflint_exitcode+=$?
+    tflint_exitcode=$((tflint_exitcode + $?))
     echo "tflint_exitcode=${tflint_exitcode}"
 done
 
@@ -36,7 +36,7 @@ else
   TFLINT_STATUS="Failed"
 fi
 
-if [ "${GITHUB_EVENT_NAME}" == "pull_request" ] && [ -n "${GITHUB_TOKEN}" ]; then
+if [ "${GITHUB_EVENT_NAME}" = "pull_request" ] && [ -n "${GITHUB_TOKEN}" ]; then
     COMMENT="#### \`Terraform Static Analysis\`
 #### \`TFLint Scan\` ${TFLINT_STATUS}
 <details><summary>Show Output</summary>
@@ -47,8 +47,8 @@ ${tflint_exitcode}
 
 </details>"
 
-    PAYLOAD=$(echo "${COMMENT}" | jq -R --slurp '{body: .}')
+    PAYLOAD=$(echo "${COMMENT}" | jq -R --slurp '{body: .}' -c)
     URL=$(jq -r .pull_request.comments_url "${GITHUB_EVENT_PATH}")
-    echo "${PAYLOAD}" | curl -s -S -H "Authorization: token ${GITHUB_TOKEN}" --header "Content-Type: application/json" --data @- "${URL}" > /dev/null
+    echo "${PAYLOAD}" | curl -s -S -H "Authorization: token ${GITHUB_TOKEN}" -H "Content-Type: application/json" -d @- "${URL}" > /dev/null
 fi
 
