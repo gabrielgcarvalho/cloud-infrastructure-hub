@@ -23,8 +23,8 @@ for directory in $directories; do
     # Set the working directory for tflint
     terraform_working_dir="${GITHUB_WORKSPACE}/${directory}"
     
-    # Run tflint on the current directory
-    tflint --config "$tflint_config" --chdir "$terraform_working_dir" 2>&1
+    # Run tflint on the current directory and capture the output
+    TFLINT_OUTPUT=$(tflint --config "$tflint_config" --chdir "$terraform_working_dir" 2>&1)
 
     tflint_exitcode=$((tflint_exitcode + $?))
     echo "tflint_exitcode=${tflint_exitcode}"
@@ -42,7 +42,7 @@ if [ "${GITHUB_EVENT_NAME}" = "pull_request" ] && [ -n "${GITHUB_TOKEN}" ]; then
 <details><summary>Show Output</summary>
 
 \`\`\`hcl
-${tflint_exitcode}
+${TFLINT_OUTPUT}
 \`\`\`
 
 </details>"
