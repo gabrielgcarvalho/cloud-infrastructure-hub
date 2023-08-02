@@ -7,13 +7,18 @@ RUN apk update && apk add --no-cache \
     unzip \
     curl \
     ca-certificates \
-    jq
+    jq \
+    py3-pip
 
 # Install tflint
 RUN curl -Lo /tmp/install_tflint.sh https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh \
     && chmod +x /tmp/install_tflint.sh \
     && /tmp/install_tflint.sh \
     && rm /tmp/install_tflint.sh
+
+# Install Checkov
+RUN pip3 install --upgrade pip && pip3 install --upgrade setuptools
+RUN pip3 install checkov
 
 COPY entrypoint.sh /entrypoint.sh
 COPY tflint-configs /tflint-configs
