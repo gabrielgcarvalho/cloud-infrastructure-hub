@@ -41,7 +41,7 @@ for directory in $directories; do
 done
 
 # Checkov
-for directory in directories; do
+for directory in $directories; do
     echo
     echo "Running Checkov in ${directory}"
     terraform_working_dir="${GITHUB_WORKSPACE}/${directory}"
@@ -54,7 +54,7 @@ for directory in directories; do
 
     # Add the checkov output for the current directory to the variable if the current output is not empty
     if [ -n "${checkov_output_current}" ]; then
-        checkov_output="${checkov_output}<br><details><summary>:mag: <strong>Checkov Output for ${directory}</strong></summary><br>${checkov_output_current}<br></details>"
+        checkov_output="${checkov_output}<br><details><summary>:mag: <strong>Checkov Output for ${directory}</strong> </summary><br>${checkov_output_current}<br></details>"
     fi
 
   done
