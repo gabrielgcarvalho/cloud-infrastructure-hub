@@ -1,7 +1,7 @@
 #!/bin/sh
 
-declare -i tflint_exitcode=0
-declare -a tflint_output_arr=()
+tflint_exitcode=0
+tflint_output_arr=()
 
 # Initialize the COMMENT variable
 COMMENT=""
