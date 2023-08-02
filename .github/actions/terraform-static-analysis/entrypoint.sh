@@ -73,10 +73,9 @@ fi
 
 if [ "${GITHUB_EVENT_NAME}" = "pull_request" ] && [ -n "${GITHUB_TOKEN}" ]; then
     COMMENT="### :shield: Terraform Static Analysis <br>
-
 TFLint Scan Status: ${TFLINT_STATUS}
 ${tflint_output}
-
+<br>
 Checkov Scan Status: ${CHECKOV_STATUS}
 ${checkov_output}"
 
