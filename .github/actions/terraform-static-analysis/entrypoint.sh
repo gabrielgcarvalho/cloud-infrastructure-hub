@@ -26,8 +26,12 @@ for directory in $directories; do
     # Run tflint on the current directory and capture the output
     tflint_output_current=$(tflint --config "$tflint_config" --chdir "$terraform_working_dir" 2>&1)
     
-    # Add the tflint output to the variable
-    tflint_output+="\n\n<details><summary>:mag: TFLint Output for ${directory}</summary>\n\n\`\`\`hcl\n${tflint_output_current}\n\`\`\`\n</details>"
+    # Add the tflint output for the current directory to the variable
+    tflint_output="${tflint_output}
+<br><br><details><summary>:mag: <strong>TFLint Output for ${directory}</strong></summary><br>
+\`\`\`markdown 
+<br> ${tflint_output_current} <br>
+\`\`\`<br></details>"
 
     tflint_exitcode=$((tflint_exitcode + $?))
     echo "tflint_exitcode=${tflint_exitcode}"
@@ -39,10 +43,13 @@ else
   TFLINT_STATUS=":x: Failed"
 fi
 
+echo $tflint_output
+
 if [ "${GITHUB_EVENT_NAME}" = "pull_request" ] && [ -n "${GITHUB_TOKEN}" ]; then
-    COMMENT="## :hammer_and_wrench: Terraform Static Analysis - TFLint Scan Status: ${TFLINT_STATUS}
+    COMMENT="### :shield: Terraform Static Analysis
+TFLint Scan Status: ${TFLINT_STATUS}
 ${tflint_output}"
-    echo $COMMENT
+
     PAYLOAD=$(echo "${COMMENT}" | jq -R --slurp '{body: .}' -c)
     URL=$(jq -r .pull_request.comments_url "${GITHUB_EVENT_PATH}")
     echo "${PAYLOAD}" | curl -s -S -H "Authorization: token ${GITHUB_TOKEN}" -H "Content-Type: application/json" -d @- "${URL}" > /dev/null
