@@ -4,14 +4,17 @@ FROM alpine:3.14.10
 RUN apk update && apk add --no-cache \
     bash \
     git \
-    unzip
+    unzip \
+    curl \
+    ca-certificates
 
-# Install Terraform
-ENV TERRAFORM_VERSION=1.0.0
-RUN wget -O terraform.zip "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" \
-    && unzip terraform.zip -d /usr/local/bin \
-    && rm terraform.zip
+# Install tflint
+RUN curl -Lo /tmp/install_tflint.sh https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh \
+    && chmod +x /tmp/install_tflint.sh \
+    && /tmp/install_tflint.sh \
+    && rm /tmp/install_tflint.sh
 
 COPY entrypoint.sh /entrypoint.sh
+COPY tflint-configs /tflint-configs
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
