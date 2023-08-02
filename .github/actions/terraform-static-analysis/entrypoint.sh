@@ -29,9 +29,7 @@ for directory in $directories; do
     # Add the tflint output for the current directory to the variable
     tflint_output="${tflint_output}
 <br><br><details><summary>:mag: <strong>TFLint Output for ${directory}</strong></summary><br>
-\`\`\`markdown 
-<br> ${tflint_output_current} <br>
-\`\`\`<br></details>"
+<br> ${tflint_output_current}<br><br></details>"
 
     tflint_exitcode=$((tflint_exitcode + $?))
     echo "tflint_exitcode=${tflint_exitcode}"
