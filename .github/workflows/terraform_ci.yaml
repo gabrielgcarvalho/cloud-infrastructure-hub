@@ -7,6 +7,9 @@ on:
 
 jobs:
   terraform-static-analysis:
+    permissions:
+      contents: read
+      pull-requests: write
     name: "Terraform Static Analysis"
     runs-on: ubuntu-latest
 
@@ -25,4 +28,6 @@ jobs:
           echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
 
       - name: Run Static Analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
         uses: ./.github/actions/terraform-static-analysis
