@@ -27,9 +27,7 @@ for directory in $directories; do
     tflint_output_current=$(tflint --config "$tflint_config" --chdir "$terraform_working_dir" 2>&1)
     
     # Add the tflint output for the current directory to the variable if the current output is not empty
-    if [ -n "${tflint_output_current//<br>/}" ]; then
-        tflint_output="${tflint_output}<br><details><summary>:mag: <strong>TFLint Output for ${directory}</strong></summary><br>${tflint_output_current}<br></details>"
-    fi
+    tflint_output="${tflint_output}<br><details><summary>:mag: <strong>TFLint Output for ${directory}</strong></summary><br>${tflint_output_current}<br></details>"
 
 
     tflint_exitcode=$((tflint_exitcode + $?))
