@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 tflint_exitcode=0
 tflint_output=""
@@ -71,7 +71,7 @@ else
     CHECKOV_STATUS=":x: Failed"
 fi
 
-if [ "${GITHUB_EVENT_NAME}" = "pull_request" ] && [ -n "${GITHUB_TOKEN}" ]; then
+if [ "${GITHUB_EVENT_NAME}" == "pull_request" ] && [ -n "${GITHUB_TOKEN}" ]; then
     COMMENT="### :shield: Terraform Static Analysis <br>
 TFLint Scan Status: ${TFLINT_STATUS}
 ${tflint_output}
@@ -79,6 +79,7 @@ ${tflint_output}
 Checkov Scan Status: ${CHECKOV_STATUS}
 ${checkov_output}"
 
+    echo $COMMENT
     PAYLOAD=$(echo "${COMMENT}" | jq -R --slurp '{body: .}' -c)
     URL=$(jq -r .pull_request.comments_url "${GITHUB_EVENT_PATH}")
     echo "${PAYLOAD}" | curl -s -S -H "Authorization: token ${GITHUB_TOKEN}" -H "Content-Type: application/json" -d @- "${URL}" > /dev/null
