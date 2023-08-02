@@ -3,6 +3,9 @@
 tflint_exitcode=0
 tflint_output=""
 
+checkov_exitcode=0
+checkov_output=""
+
 # Get a list of all terraform directories in the repo
 directories=$(find . -type f -name '*.tf' | sed 's#/[^/]*$##' | sed 's/.\///' | sort | uniq)
 echo
@@ -37,18 +40,45 @@ for directory in $directories; do
 
 done
 
+# Checkov
+for directory in directories; do
+    echo
+    echo "Running Checkov in ${directory}"
+    terraform_working_dir="${GITHUB_WORKSPACE}/${directory}"
+
+    checkov_output_current=$(checkov --quiet -d $terraform_working_dir 2>&1)
+
+    # Capture the exit code of the checkov command
+    checkov_exitcode=$((checkov_exitcode + $?))
+    echo "checkov_exitcode=${checkov_exitcode}"
+
+    # Add the checkov output for the current directory to the variable if the current output is not empty
+    if [ -n "${checkov_output_current}" ]; then
+        checkov_output="${checkov_output}<br><details><summary>:mag: <strong>Checkov Output for ${directory}</strong></summary><br>${checkov_output_current}<br></details>"
+    fi
+
+  done
+
 if [ $tflint_exitcode -eq 0 ]; then
-  TFLINT_STATUS=":white_check_mark: Success"
+    TFLINT_STATUS=":white_check_mark: Success"
 else
-  TFLINT_STATUS=":x: Failed"
+    TFLINT_STATUS=":x: Failed"
 fi
 
-echo $tflint_output
+if [ $checkov_exitcode -eq 0 ]; then
+    CHECKOV_STATUS=":white_check_mark: Success"
+else
+    CHECKOV_STATUS=":x: Failed"
+fi
 
 if [ "${GITHUB_EVENT_NAME}" = "pull_request" ] && [ -n "${GITHUB_TOKEN}" ]; then
     COMMENT="### :shield: Terraform Static Analysis
+
 TFLint Scan Status: ${TFLINT_STATUS}
-${tflint_output}"
+${tflint_output}
+
+Checkov Scan Status: ${CHECKOV_STATUS}
+${checkov_output}"
 
     PAYLOAD=$(echo "${COMMENT}" | jq -R --slurp '{body: .}' -c)
     URL=$(jq -r .pull_request.comments_url "${GITHUB_EVENT_PATH}")
