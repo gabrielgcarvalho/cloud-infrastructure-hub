@@ -23,12 +23,15 @@ for directory in $directories; do
     -e 's/$AWS_SECRET_ACCESS_KEY".*/<REDACTED>/g' \
     -e 's/$AWS_ACCESS_KEY_ID".*/<REDACTED>/g' \
     -e 's/\[id=.*\]/\[id=<REDACTED>\]/g' | tee /dev/stderr | grep '^Plan: \|^No changes.'`
-
-    plan_out = "${plan_out} <br> <strong>Plan for ${terraform_working_dir}<strong> <br> ${current_plan_out} <br>"
-    echo $plan_out
+    
+    if [ -n "${current_plan_out}" ]; then
+        plan_out = "${plan_out} <br> <strong>Plan for ${terraform_working_dir}<strong> <br> ${current_plan_out} <br>"
+        echo $plan_out
+    fi
+    
 done
 
-if [ "${GITHUB_EVENT_NAME}" == "pull_request" ] && [ -n "${GITHUB_TOKEN}" ]; then
+if [ "${GITHUB_EVENT_NAME}" == "pull_request" ] && [ -n "${GITHUB_TOKEN}" ] && [ -n "${plan_out}" ]; then
     COMMENT="## 📝 Terraform Plan <br>
 ${plan_out}"
 
