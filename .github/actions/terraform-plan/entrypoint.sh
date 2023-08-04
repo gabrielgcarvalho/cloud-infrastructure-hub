@@ -4,6 +4,11 @@ plan_out=""
 
 git config --global --add safe.directory /github/workspace
 
+# AWS CLI configuration
+aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+aws configure set default.region us-east-1
+
 # Identify which Terraform directories have changes 
 directories=$(git diff-tree --no-commit-id --name-only -r HEAD^ | grep '\.tf' | sed 's#/[^/]*$##' | grep -v '\.tf' | uniq)
 
