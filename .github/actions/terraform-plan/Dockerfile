@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     gnupg \
     lsb-release \
-    tar
+    jq
 
 # Install Terraform
 RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg \

@@ -8,6 +8,8 @@ echo
 echo "TF directories with changes"
 echo $directories
 
+git config --global --add safe.directory /github/workspace
+
 for directory in $directories; do
     echo
     echo "Running terraform in ${directory}"
