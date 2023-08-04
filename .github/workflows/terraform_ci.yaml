@@ -10,7 +10,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    name: "Terraform Static Analysis"
+    name: "🛡️Terraform Static Analysis"
     runs-on: ubuntu-latest
 
     defaults:
@@ -26,11 +26,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
         uses: ./.github/actions/terraform-static-analysis
 
-  terratest:
+  terraform-plan:
     permissions:
       contents: read
       pull-requests: write
-    name: "Terratest"
+    name: "📝Terraform Plan"
     runs-on: ubuntu-latest
 
     defaults:
@@ -44,7 +44,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
 
-      - name: Run Terratests
+      - name: Run Terraform Plan
         env:
           GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
-        uses: ./.github/actions/terratest
+        uses: ./.github/actions/terraform-plan

@@ -1,0 +1,9 @@
+name: "Terraform Plan"
+description: "Run Terraform Plan"
+
+runs:
+  using: "docker"
+  image: "Dockerfile"
+branding:
+  icon: "📝"
+  color: "gray-dark"
