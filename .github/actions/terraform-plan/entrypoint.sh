@@ -5,7 +5,8 @@ plan_out=""
 git config --global --add safe.directory /github/workspace
 
 # Identify which Terraform directories have changes 
-directories=`git diff-tree --no-commit-id --name-only -r @^ | awk '{print $1}' | grep '\.tf' | sed 's#/[^/]*$##' | grep -v '\.tf' | uniq`
+directories=$(git diff-tree --no-commit-id --name-only -r @^ | grep '\.tf' | sed 's#/[^/]*$##' | grep -v '\.tf' | uniq)
+
 echo
 echo "TF directories with changes"
 echo $directories
