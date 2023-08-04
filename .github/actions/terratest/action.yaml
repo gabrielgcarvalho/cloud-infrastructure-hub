@@ -1,6 +1,0 @@
-name: "Terratest"
-description: "Run Terratest tests."
-
-runs:
-  using: "docker"
-  image: "Dockerfile"
