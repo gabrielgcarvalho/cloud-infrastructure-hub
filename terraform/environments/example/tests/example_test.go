@@ -12,8 +12,8 @@ import (
 
 func TestTerragruntExample(t *testing.T) {
 	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
-		TerraformDir:    "../env/dev",
-		TerraformBinary: "terragrunt",
+		TerraformDir:    "../",
+		TerraformBinary: "terraform",
 	})
 
 	defer terraform.Destroy(t, terraformOptions)
