@@ -64,4 +64,5 @@ jobs:
 
       - name: Run Terraform Plan
         run: |
-          bash scripts/terraform-init.sh "${GITHUB_WORKSPACE}/terraform/environments/example"
+          git_dir=`git rev-parse --show-toplevel`
+          bash scripts/terraform-init.sh "terraform/environments/example"
