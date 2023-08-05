@@ -1,12 +1,22 @@
-name: "Terraform CI"
+name: "Example CI"
 
 on:
   push:
     branches:
       - main
+    paths:
+      - "terraform/environments/example/**"
+      - ".github/workflows/example_ci.yaml"
   pull_request:
     branches:
       - main
+    paths:
+      - "terraform/environments/example/**"
+      - ".github/workflows/example_ci.yaml"
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
 
 jobs:
   terraform-static-analysis:
@@ -44,12 +54,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: us-east-2
+          role-to-assume: "arn:aws:iam::${{ secrets.ACCOUNT_NUMBER }}:role/github-actions"
+          role-session-name: githubactionsrolesession
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
 
       - name: Run Terraform Plan
-        env:
-          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        uses: ./.github/actions/terraform-plan
+        run: |
+          bash scripts/terraform-init.sh "${GITHUB_WORKSPACE}/terraform/environments/example"
