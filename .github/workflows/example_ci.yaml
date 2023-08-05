@@ -14,10 +14,6 @@ on:
       - "terraform/environments/example/**"
       - ".github/workflows/example_ci.yaml"
 
-permissions:
-  id-token: write # This is required for requesting the JWT
-  contents: read # This is required for actions/checkout
-
 jobs:
   terraform-static-analysis:
     permissions:
@@ -43,6 +39,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      id-token: write
     name: "📝Terraform Plan"
     needs: terraform-static-analysis
     runs-on: ubuntu-latest
