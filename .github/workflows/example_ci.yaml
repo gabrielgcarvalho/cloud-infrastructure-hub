@@ -52,6 +52,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ">=1.17.0"
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -74,6 +79,17 @@ jobs:
 
             # Select workspace
             terraform -chdir="terraform/environments/example" workspace select dev
+
+            # Run Terratest
+            pushd terraform/environments/example/test
+
+            TEST=`go test | ${git_dir}/scripts/redact-output.sh | tee /dev/stderr | tail -n 1`
+
+            popd
+
+            TEST="> TERRATEST RESULT - example
+            ${TEST}"
+            bash scripts/comment-pr.sh "${TEST}"
 
             # Terraform Plan
             PLAN=`bash scripts/terraform-plan.sh terraform/environments/example | tee /dev/stderr | grep '^Plan: \|^No changes.'`
