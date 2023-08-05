@@ -6,7 +6,7 @@ resource "aws_instance" "example_hello_world" {
   user_data = base64encode(<<EOF
 #!/bin/bash
 yum update -y
-echo Hello World! | tee index.html
+echo Hello World!! | tee index.html
 python3 -m http.server 8080 --directory $(pwd) &
 EOF
   )
