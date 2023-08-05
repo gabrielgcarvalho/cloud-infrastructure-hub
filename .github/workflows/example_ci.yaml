@@ -63,6 +63,8 @@ jobs:
         uses: hashicorp/setup-terraform@v1
 
       - name: Run Terraform Plan
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
         run: |
           git_dir=`git rev-parse --show-toplevel`
 
