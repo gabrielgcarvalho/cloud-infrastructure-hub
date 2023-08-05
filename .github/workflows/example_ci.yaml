@@ -35,12 +35,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
         uses: ./.github/actions/terraform-static-analysis
 
-  terraform-plan:
+  terraform-test-and-plan:
     permissions:
       contents: read
       pull-requests: write
       id-token: write
-    name: "📝Terraform Plan"
+    name: "📝Terraform Test and Plan"
     needs: terraform-static-analysis
     runs-on: ubuntu-latest
 
@@ -81,9 +81,9 @@ jobs:
             terraform -chdir="terraform/environments/example" workspace select dev
 
             # Run Terratest
-            pushd terraform/environments/example/test
+            pushd terraform/environments/example/tests
 
-            TEST=`go test | ${git_dir}/scripts/redact-output.sh | tee /dev/stderr | tail -n 1`
+            TEST=`go test | tee /dev/stderr | tail -n 1`
 
             popd
 
