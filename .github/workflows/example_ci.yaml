@@ -41,7 +41,6 @@ jobs:
       pull-requests: write
       id-token: write
     name: "📝Terraform Test and Plan"
-    needs: terraform-static-analysis
     runs-on: ubuntu-latest
 
     defaults:
