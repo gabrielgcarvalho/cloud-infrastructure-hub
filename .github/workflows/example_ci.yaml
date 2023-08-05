@@ -21,6 +21,8 @@ jobs:
       pull-requests: write
     name: "🛡️Terraform Static Analysis"
     runs-on: ubuntu-latest
+    # Ensure that the static analysis is performed only when there is a pull request
+    if: ${{ contains(github.event, 'pull_request') }}
 
     defaults:
       run:
@@ -42,6 +44,8 @@ jobs:
       id-token: write
     name: "📝Terraform Test and Plan"
     runs-on: ubuntu-latest
+    # Ensure that the Test and Plan is performed only when there is a pull request
+    if: ${{ contains(github.event, 'pull_request') }}
 
     defaults:
       run:
