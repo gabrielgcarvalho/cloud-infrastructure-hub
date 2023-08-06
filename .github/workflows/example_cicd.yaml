@@ -142,3 +142,49 @@ jobs:
               bash scripts/comment-pr.sh "${TEST}"
             fi
           fi
+
+  terraform-apply:
+    permissions:
+      contents: read
+      id-token: write
+    name: "🚀Terraform Apply"
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: us-east-2
+          role-to-assume: "arn:aws:iam::${{secrets.ACCOUNT_NUMBER}}:role/github-actions"
+          role-session-name: githubactionsrolesession
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Apply
+        run: |
+          git_dir=`git rev-parse --show-toplevel`
+
+          bash scripts/terraform-init.sh "terraform/environments/example"
+
+          # Select workspace
+          terraform -chdir="terraform/environments/example" workspace select dev
+
+          # Run Terraform Apply
+          bash scripts/terraform-apply.sh terraform/environments/example
+  
+      - name: Slack failure notification
+        uses: slackapi/slack-github-action@v1.24.0
+          payload: |
+            {"blocks":[{"type": "section","text": {"type": "mrkdwn","text": ":no_entry: Failed GitHub Action:"}},{"type": "section","fields":[{"type": "mrkdwn","text": "*Workflow:*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.workflow }}>"},{"type": "mrkdwn","text": "*Job:*\n${{ github.job }}"},{"type": "mrkdwn","text": "*Repo:*\n${{ github.repository }}"}]}]}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        if: ${{ failure() }}
