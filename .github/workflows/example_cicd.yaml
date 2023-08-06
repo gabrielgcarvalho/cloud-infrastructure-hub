@@ -6,13 +6,13 @@ on:
       - main
     paths:
       - "terraform/environments/example/**"
-      - ".github/workflows/example_ci.yaml"
+      - ".github/workflows/example_cicd.yaml"
   pull_request:
     branches:
       - main
     paths:
       - "terraform/environments/example/**"
-      - ".github/workflows/example_ci.yaml"
+      - ".github/workflows/example_cicd.yaml"
 
 jobs:
   terraform-static-analysis:
