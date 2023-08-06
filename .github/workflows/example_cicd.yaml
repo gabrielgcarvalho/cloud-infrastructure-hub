@@ -127,12 +127,11 @@ jobs:
             pushd "terraform/environments/example/tests"
 
             # Run Terratest
-            TEST=`/usr/local/go/bin/go test | \
-            sed -e 's/AWS_SECRET_ACCESS_KEY".*/<REDACTED>/g' \
+            TEST=`go test | sed -e 's/AWS_SECRET_ACCESS_KEY".*/<REDACTED>/g' \
                 -e 's/AWS_ACCESS_KEY_ID".*/<REDACTED>/g' \
                 -e 's/$AWS_SECRET_ACCESS_KEY".*/<REDACTED>/g' \
                 -e 's/$AWS_ACCESS_KEY_ID".*/<REDACTED>/g' \
-                -e 's/\[id=.*\]/\[id=<REDACTED>\]/g' tee /dev/stderr | tail -n 1`
+                -e 's/\[id=.*\]/\[id=<REDACTED>\]/g' | tee /dev/stderr | tail -n 1`
             
             popd
 
