@@ -116,26 +116,26 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
         run: |
-          git_dir=`git rev-parse --show-toplevel`
-
           if [ ! -z ${{ github.event.pull_request.number }} ]
           then
-            
-            bash scripts/terraform-init.sh "terraform/environments/example"
-
-            # Select workspace
-            terraform -chdir="terraform/environments/example" workspace select dev
-
-            pushd "${git_dir}/terraform/environments/example/tests"
 
             # Install go
             wget -q https://dl.google.com/go/go1.20.3.linux-amd64.tar.gz
             tar -zxvf go1.20.3.linux-amd64.tar.gz
             sudo mv go /usr/local
 
+            pushd "terraform/environments/example/tests"
+
             # Run Terratest
-            TEST=`/usr/local/go/bin/go test | tee /dev/stderr | tail -n 1`
+            TEST=`/usr/local/go/bin/go test | \
+            sed -e 's/AWS_SECRET_ACCESS_KEY".*/<REDACTED>/g' \
+                -e 's/AWS_ACCESS_KEY_ID".*/<REDACTED>/g' \
+                -e 's/$AWS_SECRET_ACCESS_KEY".*/<REDACTED>/g' \
+                -e 's/$AWS_ACCESS_KEY_ID".*/<REDACTED>/g' \
+                -e 's/\[id=.*\]/\[id=<REDACTED>\]/g' tee /dev/stderr | tail -n 1`
             
+            popd
+
             if [ -n "$TEST" ]; then
               TEST="> TERRATEST RESULT - example
               ${TEST}"
