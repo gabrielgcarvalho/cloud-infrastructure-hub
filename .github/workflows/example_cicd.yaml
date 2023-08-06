@@ -22,7 +22,7 @@ jobs:
     name: "🛡️Terraform Static Analysis"
     runs-on: ubuntu-latest
     # Ensure that the static analysis is performed only when there is a pull request
-    if: ${{ contains(github.event, 'pull_request') }}
+    if: ${{ github.event_name == 'pull_request' }}
 
     defaults:
       run:
@@ -45,7 +45,7 @@ jobs:
     name: "📝Terraform Plan"
     runs-on: ubuntu-latest
     # Ensure that the Terraform Plan is performed only when there is a pull request
-    if: ${{ contains(github.event, 'pull_request') }}
+    if: ${{ github.event_name == 'pull_request' }}
 
     defaults:
       run:
@@ -92,7 +92,7 @@ jobs:
     name: "🧪Terratest"
     runs-on: ubuntu-latest
     # Ensure that the Terratest is performed only when there is a pull request
-    if: ${{ contains(github.event, 'pull_request') }}
+    if: ${{ github.event_name == 'pull_request' }}
 
     defaults:
       run:
