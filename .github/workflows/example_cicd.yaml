@@ -121,11 +121,11 @@ jobs:
 
             # Install go
             wget -q https://dl.google.com/go/go1.20.3.linux-amd64.tar.gz
-            tar -zxvf go1.20.3.linux-amd64.tar.gz
+            tar --warning=no-verbose -zxvf go1.20.3.linux-amd64.tar.gz
             sudo mv go /usr/local
 
             bash scripts/terraform-init.sh "terraform/environments/example"
-            
+
             pushd "terraform/environments/example/tests"
 
             # Run Terratest
