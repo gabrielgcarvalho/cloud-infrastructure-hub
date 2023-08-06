@@ -1,4 +1,4 @@
-name: "Example CI"
+name: "Example CI/CD"
 
 on:
   push:
@@ -149,6 +149,8 @@ jobs:
       id-token: write
     name: "🚀Terraform Apply"
     runs-on: ubuntu-latest
+    # Ensure that the Terraform Apply is performed only on main after a successful push
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
     defaults:
       run:
