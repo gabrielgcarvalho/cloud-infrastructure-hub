@@ -37,14 +37,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
         uses: ./.github/actions/terraform-static-analysis
 
-  terraform-test-and-plan:
+  terraform-plan:
     permissions:
       contents: read
       pull-requests: write
       id-token: write
-    name: "📝Terraform Test and Plan"
+    name: "📝Terraform Plan"
     runs-on: ubuntu-latest
-    # Ensure that the Test and Plan is performed only when there is a pull request
+    # Ensure that the Terraform Plan is performed only when there is a pull request
     if: ${{ contains(github.event, 'pull_request') }}
 
     defaults:
@@ -54,11 +54,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Setup Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: ">=1.17.0"
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -83,19 +78,67 @@ jobs:
             # Select workspace
             terraform -chdir="terraform/environments/example" workspace select dev
 
-            # Run Terratest
-            pushd terraform/environments/example/tests
-
-            TEST=`go test | tee /dev/stderr | tail -n 1`
-
-            popd
-
-            TEST="> TERRATEST RESULT - example
-            ${TEST}"
-            bash scripts/comment-pr.sh "${TEST}"
-
             # Terraform Plan
             PLAN=`bash scripts/terraform-plan.sh terraform/environments/example | tee /dev/stderr | grep '^Plan: \|^No changes.'`
 
             bash scripts/comment-pr.sh "${PLAN}"
+          fi
+
+  terratest:
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    name: "🧪Terratest"
+    runs-on: ubuntu-latest
+    # Ensure that the Terratest is performed only when there is a pull request
+    if: ${{ contains(github.event, 'pull_request') }}
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: us-east-2
+          role-to-assume: "arn:aws:iam::${{secrets.ACCOUNT_NUMBER}}:role/github-actions"
+          role-session-name: githubactionsrolesession
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Run Terratest
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+        run: |
+          git_dir=`git rev-parse --show-toplevel`
+
+          if [ ! -z ${{ github.event.pull_request.number }} ]
+          then
+            
+            bash scripts/terraform-init.sh "terraform/environments/example"
+
+            # Select workspace
+            terraform -chdir="terraform/environments/example" workspace select dev
+
+            pushd "${git_dir}/terraform/environments/example/tests"
+
+            # Install go
+            wget -q https://dl.google.com/go/go1.20.3.linux-amd64.tar.gz
+            tar -zxvf go1.20.3.linux-amd64.tar.gz
+            sudo mv go /usr/local
+
+            # Run Terratest
+            TEST=`/usr/local/go/bin/go test | tee /dev/stderr | tail -n 1`
+            
+            if [ -n "$TEST" ]; then
+              TEST="> TERRATEST RESULT - example
+              ${TEST}"
+              bash scripts/comment-pr.sh "${TEST}"
+            fi
           fi
